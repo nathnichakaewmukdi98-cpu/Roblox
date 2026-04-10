@@ -3,50 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Web Roblox Experience</title>
+    <title>Old Roblox - Classic Revival</title>
     <style>
-        /* CSS: จัดการหน้าจอและ UI เหมือนในเกม */
-        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        canvas { display: block; }
-        
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        /* --- CSS: Old Roblox UI Theme --- */
+        :root {
+            --rbx-blue: #0066ff;
+            --rbx-gray: #e1e1e1;
+            --rbx-dark-gray: #4b4b4b;
         }
 
-        .label { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 5px; margin-bottom: 5px; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #fff; }
+
+        /* UI Screens */
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 10; background: white; }
+        .active { display: flex; }
+
+        /* Login Screen */
+        #login-screen { background: #f2f2f2; justify-content: center; align-items: center; }
+        .login-box { background: white; padding: 30px; border: 1px solid #ccc; box-shadow: 5px 5px 0px rgba(0,0,0,0.1); width: 300px; text-align: center; }
+        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #aaa; }
+        .btn-blue { background: var(--rbx-blue); color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
+
+        /* Header Nav */
+        nav { background: var(--rbx-dark-gray); color: white; display: flex; padding: 10px; gap: 15px; align-items: center; }
+        nav div { cursor: pointer; font-size: 14px; }
+        nav .robux-display { margin-left: auto; color: #00ff00; font-weight: bold; }
+
+        /* Game Grid */
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding: 20px; overflow-y: auto; }
+        .game-card { border: 1px solid #ccc; padding: 10px; cursor: pointer; text-align: center; }
+        .game-card:hover { background: #f9f9f9; }
+        .game-thumb { width: 100%; aspect-ratio: 1; background: #ddd; margin-bottom: 10px; }
+
+        /* Avatar Editor */
+        .avatar-container { display: flex; padding: 20px; gap: 20px; flex-wrap: wrap; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; }
+        .item-card { border: 1px solid #eee; padding: 5px; cursor: pointer; font-size: 12px; text-align: center; position: relative; }
+        .price-tag { color: green; font-weight: bold; }
+
+        /* In-Game UI */
+        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 5; }
+        #joystick-container { position: absolute; bottom: 50px; left: 50px; width: 120px; height: 120px; background: rgba(0,0,0,0.1); border-radius: 50%; pointer-events: auto; }
+        #joystick-knob { position: absolute; top: 35px; left: 35px; width: 50px; height: 50px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+        #jump-btn { position: absolute; bottom: 60px; right: 50px; width: 70px; height: 70px; background: rgba(255,255,255,0.2); border: 2px solid white; border-radius: 50%; pointer-events: auto; color: white; font-size: 30px; display: flex; justify-content: center; align-items: center; }
         
-        #mobile-controls {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            display: none; /* จะเปิดทำงานถ้าตรวจเจอว่าใช้มือถือ */
-        }
-        
-        .jump-btn {
-            width: 70px;
-            height: 70px;
-            background: rgba(255,255,255,0.3);
-            border: 2px solid white;
-            border-radius: 50%;
-            color: white;
-            font-weight: bold;
-        }
+        #top-menu { position: absolute; top: 10px; left: 10px; pointer-events: auto; }
+        .menu-btn { background: rgba(0,0,0,0.5); border: none; color: white; padding: 5px 10px; cursor: pointer; margin-right: 5px; }
+
+        #chat-box { position: absolute; top: 50px; left: 10px; width: 250px; height: 150px; background: rgba(0,0,0,0.3); pointer-events: auto; overflow-y: auto; color: white; padding: 5px; font-size: 13px; }
+        #chat-input { position: absolute; top: 205px; left: 10px; width: 250px; pointer-events: auto; background: rgba(0,0,0,0.5); border: none; color: white; padding: 5px; }
+
+        /* Social List */
+        #friends-panel { position: absolute; top: 10px; right: 10px; width: 150px; background: rgba(0,0,0,0.4); color: white; padding: 10px; pointer-events: auto; }
+        .friend-item { font-size: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        .status-online { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <div id="hud">
-        <div class="label"><b>Experience:</b> Sprout World (Beta)</div>
-        <div class="label"><b>Controls:</b> WASD to Move | Space to Jump</div>
+    <div id="login-screen" class="screen active">
+        <div class="login-box">
+            <h2 style="color:var(--rbx-blue)">Old Roblox</h2>
+            <input type="text" id="username-in" placeholder="ชื่อผู้ใช้...">
+            <input type="password" placeholder="รหัสผ่าน...">
+            <button class="btn-blue" onclick="app.login()">เข้าสู่ระบบ / สร้างบัญชี</button>
+            <p style="font-size: 11px; color: #666; margin-top: 15px;">สะสม Robux ฟรีได้ทุกวันที่เข้าใช้งาน!</p>
+        </div>
     </div>
 
-    <div id="mobile-controls">
-        <button class="jump-btn" id="btn-jump">JUMP</button>
+    <div id="home-screen" class="screen">
+        <nav>
+            <div onclick="app.showScreen('home-screen')"><b>GAMES</b></div>
+            <div onclick="app.showScreen('avatar-screen')">AVATAR</div>
+            <div onclick="app.showScreen('store-screen')">STORE</div>
+            <div class="robux-display">R$ <span id="robux-val">0</span></div>
+            <div id="user-display" style="font-size: 12px; border-left: 1px solid #666; padding-left: 10px;">Guest</div>
+        </nav>
+        <div class="game-grid" id="game-list">
+            </div>
+    </div>
+
+    <div id="avatar-screen" class="screen">
+        <nav>
+            <div onclick="app.showScreen('home-screen')"><b>BACK TO GAMES</b></div>
+            <div style="margin-left: 20px;">แต่งตัวละคร (Inventory)</div>
+        </nav>
+        <div class="avatar-container">
+            <div id="avatar-preview" style="width: 200px; height: 300px; background: #eee; position: relative;">
+                <div style="position: absolute; bottom: 20px; left: 50px; width: 100px; height: 200px; border: 2px solid #555;">
+                    <div id="p-head" style="width: 40px; height: 40px; background: #ffdbac; margin: 0 auto;"></div>
+                    <div id="p-torso" style="width: 80px; height: 100px; background: #0066ff; margin: 0 auto;"></div>
+                </div>
+            </div>
+            <div class="inventory-grid" id="inventory-items"></div>
+        </div>
+    </div>
+
+    <div id="store-screen" class="screen">
+        <nav>
+            <div onclick="app.showScreen('home-screen')"><b>BACK</b></div>
+            <div style="margin-left: 20px;">Catalog (ของพรีเมียม)</div>
+        </nav>
+        <div class="game-grid" id="store-items"></div>
+    </div>
+
+    <div id="game-ui">
+        <div id="top-menu">
+            <button class="menu-btn" onclick="app.leaveGame()">ESC (Leave)</button>
+            <button class="menu-btn" onclick="app.resetChar()">Reset</button>
+        </div>
+
+        <div id="chat-box"></div>
+        <input type="text" id="chat-input" placeholder="พิมพ์คุยที่นี่...">
+
+        <div id="friends-panel">
+            <b>Players</b>
+            <div id="player-list"></div>
+        </div>
+
+        <div id="joystick-container">
+            <div id="joystick-knob"></div>
+        </div>
+        <div id="jump-btn">↑</div>
     </div>
 
     <script type="importmap">
@@ -56,139 +134,274 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- 1. SETUP ENGINE ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB); // Sky Blue
-        scene.fog = new THREE.Fog(0x87CEEB, 10, 50);
+        // --- ระบบจัดการแอป (Logic) ---
+        const app = {
+            user: { name: "Guest", robux: 0, inventory: [], wearing: { head: "#ffdbac", torso: "#0066ff", hair: null } },
+            currentMap: null,
+            isMobile: 'ontouchstart' in window,
+            
+            init() {
+                this.loadData();
+                this.renderGames();
+                this.renderStore();
+                this.checkDailyReward();
+                
+                // Keyboard Chat Toggle
+                window.addEventListener('keydown', (e) => {
+                    if (e.code === "Enter") {
+                        const input = document.getElementById('chat-input');
+                        if (document.activeElement === input) {
+                            this.sendChat(input.value);
+                            input.value = "";
+                            input.blur();
+                        } else {
+                            input.focus();
+                        }
+                    }
+                });
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        document.body.appendChild(renderer.domElement);
+                // Jump button
+                document.getElementById('jump-btn').addEventListener('touchstart', () => { if(world.isGrounded) world.velocity.y = 0.25; });
+                window.addEventListener('keydown', (e) => { if(e.code === "Space" && world.isGrounded) world.velocity.y = 0.25; });
+            },
 
-        // --- 2. LIGHTING (เหมือนระบบ Lighting ใน Studio) ---
-        const sun = new THREE.DirectionalLight(0xffffff, 1);
-        sun.position.set(10, 20, 10);
-        sun.castShadow = true;
-        scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x404040, 1.5));
+            loadData() {
+                const saved = localStorage.getItem('old_rbx_user');
+                if (saved) {
+                    this.user = JSON.parse(saved);
+                    document.getElementById('robux-val').innerText = this.user.robux;
+                    document.getElementById('user-display').innerText = this.user.name;
+                }
+            },
 
-        // --- 3. BASEPLATE & OBBY PARTS ---
-        // พื้นสีเทาคลาสสิก
-        const baseplateGeo = new THREE.BoxGeometry(100, 1, 100);
-        const baseplateMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
-        const baseplate = new THREE.Mesh(baseplateGeo, baseplateMat);
-        baseplate.position.y = -0.5;
-        baseplate.receiveShadow = true;
-        scene.add(baseplate);
+            saveData() {
+                localStorage.setItem('old_rbx_user', JSON.stringify(this.user));
+                document.getElementById('robux-val').innerText = this.user.robux;
+            },
 
-        // สร้าง Kill Part (สีแดง Neon)
-        const killPartGeo = new THREE.BoxGeometry(5, 0.5, 5);
-        const killPartMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.5 });
-        const killPart = new THREE.Mesh(killPartGeo, killPartMat);
-        killPart.position.set(0, 0.1, -10);
-        killPart.castShadow = true;
-        scene.add(killPart);
+            login() {
+                const name = document.getElementById('username-in').value || "Player" + Math.floor(Math.random()*1000);
+                this.user.name = name;
+                this.saveData();
+                this.showScreen('home-screen');
+                document.getElementById('user-display').innerText = name;
+            },
 
-        // --- 4. AVATAR (R6 Style) ---
-        const player = new THREE.Group();
-        
-        // ตัว (Torso)
-        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: 0x3d4fe0 }));
-        body.castShadow = true;
-        player.add(body);
+            checkDailyReward() {
+                const last = localStorage.getItem('last_login');
+                const today = new Date().toDateString();
+                if (last !== today) {
+                    this.user.robux += 10;
+                    this.saveData();
+                    localStorage.setItem('last_login', today);
+                    alert("ยินดีต้อนรับกลับ! คุณได้รับ 10 Robux ฟรีสำหรับการเข้าชมวันนี้");
+                }
+            },
 
-        // หัว (Head)
-        const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE.MeshStandardMaterial({ color: 0xffdbac }));
-        head.position.y = 0.9;
-        head.castShadow = true;
-        player.add(head);
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                if (id === 'avatar-screen') this.renderAvatarEditor();
+            },
 
-        player.position.y = 0.6;
-        scene.add(player);
+            renderGames() {
+                const maps = [
+                    { name: "Classic Crossroads", color: 0x44aa44, type: "Combat" },
+                    { name: "Glass Bridge Obby", color: 0x88ccff, type: "Obby" },
+                    { name: "Baseplate Testing", color: 0x999999, type: "Build" },
+                    { name: "Haunted Mansion", color: 0x222222, type: "Horror" }
+                ];
+                const list = document.getElementById('game-list');
+                list.innerHTML = "";
+                maps.forEach(m => {
+                    const el = document.createElement('div');
+                    el.className = "game-card";
+                    el.innerHTML = `<div class="game-thumb" style="background:#${m.color.toString(16)}"></div><b>${m.name}</b><br><small>${m.type}</small>`;
+                    el.onclick = () => this.startGame(m);
+                    list.appendChild(el);
+                });
+            },
 
-        // --- 5. PHYSICS & MOVEMENT ---
-        let velocity = new THREE.Vector3();
-        let isGrounded = true;
-        const speed = 0.12;
-        const jumpForce = 0.2;
-        const gravity = 0.008;
+            renderStore() {
+                const items = [
+                    { name: "Red Hair", type: "hair", price: 0, color: "#ff0000" },
+                    { name: "Blue Hair", type: "hair", price: 0, color: "#0000ff" },
+                    { name: "Yellow Shirt", type: "torso", price: 0, color: "#ffff00" },
+                    { name: "Golden Crown", type: "hair", price: 50, color: "#ffd700" },
+                    { name: "Admin Cape", type: "torso", price: 100, color: "#000000" }
+                ];
+                const store = document.getElementById('store-items');
+                items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = "game-card";
+                    el.innerHTML = `
+                        <div class="game-thumb" style="background:${item.color}"></div>
+                        <b>${item.name}</b><br>
+                        <span class="price-tag">${item.price === 0 ? "FREE" : "R$ "+item.price}</span>
+                    `;
+                    el.onclick = () => this.buyItem(item);
+                    store.appendChild(el);
+                });
+            },
 
-        const keys = {};
-        window.addEventListener('keydown', (e) => keys[e.code] = true);
-        window.addEventListener('keyup', (e) => keys[e.code] = false);
+            buyItem(item) {
+                if (this.user.robux >= item.price) {
+                    this.user.robux -= item.price;
+                    this.user.inventory.push(item);
+                    this.saveData();
+                    alert("ซื้อสำเร็จ!");
+                } else {
+                    alert("Robux ไม่พอ! ลองเข้ามาใหม่พรุ่งนี้เพื่อรับฟรี");
+                }
+            },
 
-        // ฟังก์ชัน Reset ตัวละคร (เหมือนตอนตายใน Roblox)
-        function respawn() {
-            player.position.set(0, 0.6, 0);
-            velocity.set(0,0,0);
-        }
+            renderAvatarEditor() {
+                const inv = document.getElementById('inventory-items');
+                inv.innerHTML = "";
+                // รวมของเริ่มต้น + ของที่ซื้อ
+                const allItems = [...this.user.inventory];
+                allItems.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = "item-card";
+                    el.innerHTML = `<div style="width:30px;height:30px;background:${item.color};margin:0 auto;"></div>${item.name}`;
+                    el.onclick = () => {
+                        this.user.wearing[item.type] = item.color;
+                        this.updateAvatarPreview();
+                    };
+                    inv.appendChild(el);
+                });
+            },
 
-        // --- 6. GAME LOOP ---
-        function update() {
-            requestAnimationFrame(update);
+            updateAvatarPreview() {
+                document.getElementById('p-head').style.background = this.user.wearing.head;
+                document.getElementById('p-torso').style.background = this.user.wearing.torso;
+            },
 
-            // การเดิน (WASD)
-            if (keys['KeyW']) player.translateZ(-speed);
-            if (keys['KeyS']) player.translateZ(speed);
-            if (keys['KeyA']) player.rotation.y += 0.05;
-            if (keys['KeyD']) player.rotation.y -= 0.05;
+            startGame(map) {
+                this.currentMap = map;
+                this.showScreen('none');
+                document.getElementById('game-ui').style.display = 'block';
+                world.init(map);
+                this.spawnBots();
+            },
 
-            // ระบบกระโดดและฟิสิกส์ (Simple Luau Logic)
-            if (keys['Space'] && isGrounded) {
-                velocity.y = jumpForce;
-                isGrounded = false;
+            leaveGame() {
+                document.getElementById('game-ui').style.display = 'none';
+                this.showScreen('home-screen');
+                world.stop();
+            },
+
+            resetChar() {
+                world.player.position.set(0, 5, 0);
+            },
+
+            sendChat(msg) {
+                if(!msg) return;
+                const box = document.getElementById('chat-box');
+                box.innerHTML += `<div><b>${this.user.name}:</b> ${msg}</div>`;
+                box.scrollTop = box.scrollHeight;
+                
+                // Bot Response Chance
+                if(Math.random() > 0.5) {
+                    setTimeout(() => {
+                        const botMsg = ["Hello!", "Cool map", "Add me plz", "I'm a bot AI :)", "XD"][Math.floor(Math.random()*5)];
+                        box.innerHTML += `<div style="color:#aff"><b>Bot_AI:</b> ${botMsg}</div>`;
+                    }, 1000);
+                }
+            },
+
+            spawnBots() {
+                const list = document.getElementById('player-list');
+                list.innerHTML = `<div class="friend-item"><div class="status-online"></div> ${this.user.name} (You)</div>`;
+                ["Builderman", "Telamon", "Bot_Friend_AI", "OldPlayer06"].forEach(b => {
+                    list.innerHTML += `<div class="friend-item"><div class="status-online"></div> ${b} <button style="font-size:8px" onclick="alert('Friend request sent!')">+</button></div>`;
+                });
             }
+        };
 
-            if (!isGrounded) {
-                velocity.y -= gravity;
-                player.position.y += velocity.y;
-            }
+        // --- ระบบโลก 3D (Three.js Engine) ---
+        const world = {
+            scene: null, camera: null, renderer: null, player: null,
+            velocity: new THREE.Vector3(), isGrounded: false,
+            moveDir: { forward: 0, right: 0 },
+            running: false,
 
-            // พื้นดินปลอมๆ (Ground Collision)
-            if (player.position.y <= 0.6) {
-                player.position.y = 0.6;
-                isGrounded = true;
-                velocity.y = 0;
-            }
+            init(mapData) {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(mapData.color || 0x87CEEB);
+                this.scene.fog = new THREE.Fog(this.scene.background, 20, 100);
 
-            // ตรวจสอบการชนกับ Kill Part (Touch Event)
-            const distance = player.position.distanceTo(killPart.position);
-            if (distance < 2.5) {
-                respawn();
-            }
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.shadowMap.enabled = true;
+                document.body.appendChild(this.renderer.domElement);
 
-            // ตกแมพ (Void)
-            if (player.position.y < -10) respawn();
+                // Lighting
+                const sun = new THREE.DirectionalLight(0xffffff, 1);
+                sun.position.set(10, 20, 10);
+                sun.castShadow = true;
+                this.scene.add(sun);
+                this.scene.add(new THREE.AmbientLight(0x666666));
 
-            // กล้องตามตัวละคร (Third Person)
-            const relativeCameraOffset = new THREE.Vector3(0, 5, 10);
-            const cameraOffset = relativeCameraOffset.applyMatrix4(player.matrixWorld);
-            camera.position.x = cameraOffset.x;
-            camera.position.y = cameraOffset.y;
-            camera.position.z = cameraOffset.z;
-            camera.lookAt(player.position);
+                // Baseplate with Studs (จำลองลายบล็อกเก่า)
+                const groundGeo = new THREE.PlaneGeometry(200, 200);
+                const groundMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+                const ground = new THREE.Mesh(groundGeo, groundMat);
+                ground.rotation.x = -Math.PI/2;
+                ground.receiveShadow = true;
+                this.scene.add(ground);
 
-            renderer.render(scene, camera);
-        }
+                // Player Model (R6 Style)
+                this.player = new THREE.Group();
+                const torso = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: app.user.wearing.torso }));
+                torso.castShadow = true;
+                this.player.add(torso);
+                
+                const head = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshStandardMaterial({ color: app.user.wearing.head }));
+                head.position.y = 0.9;
+                head.castShadow = true;
+                this.player.add(head);
 
-        // จัดการหน้าจอเวลาเปลี่ยนขนาด (Resize)
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+                // หน้า (Face)
+                const eyeGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.15, 0.95, 0.31);
+                const eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.15, 0.95, 0.31);
+                this.player.add(eyeL, eyeR);
 
-        // ตรวจสอบว่าเป็นมือถือหรือไม่ (เพื่อเปิดปุ่มกระโดด)
-        if ('ontouchstart' in window) {
-            document.getElementById('mobile-controls').style.display = 'block';
-            document.getElementById('btn-jump').addEventListener('touchstart', () => {
-                if(isGrounded) { velocity.y = jumpForce; isGrounded = false; }
-            });
-        }
+                this.player.position.y = 5;
+                this.scene.add(this.player);
 
-        update();
-    </script>
-</body>
-</html>
+                this.setupControls();
+                this.running = true;
+                this.animate();
+            },
+
+            setupControls() {
+                // Keyboard
+                window.onkeydown = (e) => {
+                    if(e.code === 'KeyW') this.moveDir.forward = 1;
+                    if(e.code === 'KeyS') this.moveDir.forward = -1;
+                    if(e.code === 'KeyA') this.moveDir.right = -1;
+                    if(e.code === 'KeyD') this.moveDir.right = 1;
+                };
+                window.onkeyup = (e) => {
+                    if(['KeyW', 'KeyS'].includes(e.code)) this.moveDir.forward = 0;
+                    if(['KeyA', 'KeyD'].includes(e.code)) this.moveDir.right = 0;
+                };
+
+                // Mobile Joystick
+                const knob = document.getElementById('joystick-knob');
+                const container = document.getElementById('joystick-container');
+                container.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const rect = container.getBoundingClientRect();
+                    const x = touch.clientX - rect.left - 60;
+                    const y = touch.clientY - rect.top - 60;
+                    const dist = Math.min(Math.sqrt(x*x + y*y), 40);
+                    const angle = Math.atan2(y, x);
+                    
+                    knob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+                    this.moveDir.right = Math.cos
