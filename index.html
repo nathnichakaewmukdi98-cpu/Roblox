@@ -3,127 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Old Roblox - Classic Revival</title>
+    <title>Old Roblox - Classic Legacy</title>
     <style>
-        /* --- CSS: OLD ROBLOX AESTHETIC --- */
+        /* --- CSS: OLD ROBLOX STYLE (2008-2012) --- */
         :root { --rbx-blue: #0066ff; --rbx-gray: #e1e1e1; --rbx-dark: #333; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #fff; }
 
-        /* Screens */
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 10; background: #f0f0f0; }
+        /* Screens Management */
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 10; background: #f2f2f2; }
         .active { display: flex; }
 
         /* Login Screen */
         #login-screen { justify-content: center; align-items: center; background: #3a3a3a; }
-        .login-box { background: white; padding: 30px; border: 1px solid #000; width: 300px; text-align: center; box-shadow: 10px 10px 0px rgba(0,0,0,0.2); }
-        .login-box h1 { color: var(--rbx-blue); font-size: 24px; margin-bottom: 20px; }
-        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #aaa; }
-        .btn-blue { background: var(--rbx-blue); color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; border-bottom: 3px solid #0044aa; }
+        .login-box { background: white; padding: 30px; border: 1px solid #000; width: 320px; text-align: center; box-shadow: 10px 10px 0px rgba(0,0,0,0.5); }
+        .login-box h1 { color: var(--rbx-blue); font-size: 28px; margin: 0 0 20px 0; font-weight: 900; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #aaa; font-size: 16px; }
+        .btn-blue { background: var(--rbx-blue); color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; width: 100%; border-bottom: 4px solid #0044aa; font-size: 16px; }
+        .btn-blue:active { border-bottom: 0; transform: translateY(2px); }
 
-        /* Header */
-        nav { background: var(--rbx-dark); color: white; display: flex; padding: 10px 20px; gap: 20px; align-items: center; }
-        nav div { cursor: pointer; font-size: 14px; font-weight: bold; }
-        nav .robux-display { margin-left: auto; color: #00ff00; font-weight: bold; }
+        /* Navigation Header */
+        nav { background: var(--rbx-dark); color: white; display: flex; padding: 10px 15px; gap: 15px; align-items: center; flex-wrap: wrap; }
+        nav div { cursor: pointer; font-size: 13px; font-weight: bold; text-transform: uppercase; }
+        nav .robux-info { margin-left: auto; color: #00ff00; font-weight: 900; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 3px; }
 
-        /* Game & Store Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 20px; overflow-y: auto; }
-        .card { background: white; border: 1px solid #ccc; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        /* Content Grids */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 20px; overflow-y: auto; flex: 1; }
+        .card { background: white; border: 1px solid #ccc; padding: 10px; text-align: center; cursor: pointer; position: relative; }
         .card:hover { border-color: var(--rbx-blue); background: #f9f9f9; }
-        .thumb { width: 100%; aspect-ratio: 1; background: #ddd; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-        .price { color: #008000; font-weight: bold; }
+        .thumb { width: 100%; aspect-ratio: 1; background: #ddd; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; overflow: hidden; }
+        .thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .price { color: #008000; font-weight: bold; font-size: 13px; display: block; margin-top: 5px; }
 
         /* Avatar Editor */
-        #avatar-screen { background: #eee; }
-        .avatar-main { display: flex; height: 100%; }
-        .preview-pane { width: 300px; background: #fff; border-right: 2px solid #ccc; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .inventory-pane { flex: 1; overflow-y: auto; background: #fff; margin: 20px; border: 1px solid #ccc; }
+        .avatar-container { display: flex; flex: 1; height: 100%; }
+        .preview-pane { width: 280px; background: #fff; border-right: 2px solid #ccc; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .char-render { width: 150px; height: 220px; background: #eee; border: 2px solid #333; position: relative; }
+        .char-head { width: 50px; height: 50px; background: #ffdbac; margin: 10px auto; border: 1px solid #000; }
+        .char-torso { width: 90px; height: 100px; background: #0066ff; margin: 0 auto; border: 1px solid #000; }
 
-        /* In-Game UI */
-        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 5; }
-        .ui-el { pointer-events: auto; }
+        /* In-Game HUD */
+        #game-ui { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 5; }
+        .hud-el { pointer-events: auto; }
         
-        /* Mobile Joystick */
-        #joystick-base { position: absolute; bottom: 50px; left: 50px; width: 120px; height: 120px; background: rgba(0,0,0,0.1); border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
-        #joystick-knob { position: absolute; top: 35px; left: 35px; width: 50px; height: 50px; background: rgba(255,255,255,0.5); border-radius: 50%; }
-        #jump-btn { position: absolute; bottom: 60px; right: 50px; width: 80px; height: 80px; background: rgba(0,0,0,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; border: 3px solid white; }
+        /* Mobile Controls */
+        #joystick-base { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; background: rgba(0,0,0,0.1); border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
+        #joystick-knob { position: absolute; top: 40px; left: 40px; width: 50px; height: 50px; background: rgba(255,255,255,0.4); border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        #jump-btn { position: absolute; bottom: 50px; right: 40px; width: 85px; height: 85px; background: rgba(0,0,0,0.2); border: 4px solid rgba(255,255,255,0.5); border-radius: 50%; color: white; font-size: 50px; display: flex; align-items: center; justify-content: center; text-shadow: 0 2px 5px #000; }
 
-        /* Chat */
-        #chat-window { position: absolute; top: 50px; left: 10px; width: 250px; height: 150px; background: rgba(0,0,0,0.3); color: white; padding: 5px; overflow-y: auto; font-size: 13px; }
-        #chat-input { position: absolute; top: 205px; left: 10px; width: 250px; background: rgba(0,0,0,0.5); border: none; color: white; padding: 5px; }
+        /* Chat & Social */
+        #chat-window { position: absolute; top: 10px; left: 10px; width: 280px; height: 180px; background: rgba(0,0,0,0.3); color: white; padding: 10px; font-size: 13px; overflow-y: auto; text-shadow: 1px 1px 1px #000; }
+        #chat-input { position: absolute; top: 195px; left: 10px; width: 280px; background: rgba(0,0,0,0.5); border: none; color: white; padding: 10px; font-size: 14px; }
+        #friend-notif { position: absolute; top: 20px; right: 20px; background: white; padding: 15px; border-left: 6px solid var(--rbx-blue); box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; width: 220px; }
 
-        /* Escape Menu */
-        #esc-menu { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; flex-direction: column; gap: 10px; }
-        .menu-btn { width: 200px; padding: 15px; background: white; border: none; font-weight: bold; cursor: pointer; }
-
-        /* Social */
-        #friend-list { position: absolute; top: 10px; right: 10px; width: 150px; background: rgba(0,0,0,0.4); color: white; padding: 10px; font-size: 12px; }
+        /* Menu System */
+        #rbx-logo { position: absolute; top: 10px; left: 10px; width: 45px; height: 45px; cursor: pointer; z-index: 20; }
+        #esc-menu { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; flex-direction: column; gap: 15px; z-index: 30; }
+        .menu-item { background: white; width: 220px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; border-radius: 4px; box-shadow: 0 4px 0 #999; }
+        .menu-item:active { transform: translateY(4px); box-shadow: none; }
+        
+        #player-list-hud { position: absolute; top: 10px; right: 10px; width: 160px; background: rgba(0,0,0,0.4); color: white; padding: 10px; border-radius: 5px; }
+        .p-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+        .p-img { width: 24px; height: 24px; background: #eee; border-radius: 50%; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="screen active">
         <div class="login-box">
-            <h1>OLD ROBLOX</h1>
-            <input type="text" id="username-in" placeholder="Username (ชื่อผู้ใช้)">
-            <input type="password" id="password-in" placeholder="Password (รหัสผ่าน)">
-            <button class="btn-blue" onclick="App.login()">Log In / Sign Up</button>
-            <p style="font-size: 11px; margin-top: 10px;">เล่นทุกวันเพื่อรับ Robux ฟรี!</p>
+            <h1>ROBLOX</h1>
+            <p style="font-size: 12px; color: #666; margin-top: -15px; margin-bottom: 20px;">BUILDING THE VIRTUAL WORLD</p>
+            <input type="text" id="user-field" placeholder="Username (ชื่อผู้ใช้)">
+            <input type="password" id="pass-field" placeholder="Password (รหัสผ่าน)">
+            <button class="btn-blue" id="login-trigger">LOGIN / SIGN UP</button>
+            <p style="font-size: 11px; margin-top: 15px; color: #888;">สะสม Robux ฟรีได้จากการเข้าเล่นทุกวัน!</p>
         </div>
     </div>
 
     <div id="home-screen" class="screen">
         <nav>
-            <div onclick="App.show('home-screen')">GAMES</div>
-            <div onclick="App.show('avatar-screen')">AVATAR</div>
-            <div onclick="App.show('store-screen')">STORE</div>
-            <div class="robux-display">R$ <span id="robux-val">0</span></div>
-            <div id="user-tag" style="font-size:12px; opacity:0.7;">Guest</div>
+            <div onclick="App.show('home-screen')">Games</div>
+            <div onclick="App.show('avatar-screen')">Avatar</div>
+            <div onclick="App.show('store-screen')">Catalog</div>
+            <div class="robux-info">R$ <span id="robux-val">0</span></div>
+            <div id="u-display" style="color:#ccc; font-size: 11px;">Guest</div>
         </nav>
+        <div style="padding: 20px 20px 0 20px; font-weight: bold; color: #444;">RECOMMENDED EXPERIENCES</div>
         <div class="grid" id="game-list"></div>
     </div>
 
     <div id="avatar-screen" class="screen">
-        <nav><div onclick="App.show('home-screen')">← BACK</div></nav>
-        <div class="avatar-main">
+        <nav><div onclick="App.show('home-screen')">← BACK TO GAMES</div></nav>
+        <div class="avatar-container">
             <div class="preview-pane">
-                <div id="char-preview" style="width:120px; height:200px; background:#ccc; border:2px solid #000; position:relative;">
-                    <div id="head-color" style="width:40px; height:40px; background:#ffdbac; margin:0 auto;"></div>
-                    <div id="torso-color" style="width:80px; height:100px; background:#0066ff; margin:0 auto;"></div>
+                <h3>Avatar Editor</h3>
+                <div class="char-render">
+                    <div id="p-head" class="char-head"></div>
+                    <div id="p-torso" class="char-torso"></div>
                 </div>
-                <p id="wearing-info">Wearing: Default R6</p>
+                <p id="wearing-text" style="font-size: 12px; color: #666; margin-top: 15px;">R6 Style</p>
             </div>
-            <div class="inventory-pane">
-                <div class="grid" id="inv-grid"></div>
-            </div>
+            <div class="grid" id="inventory-grid"></div>
         </div>
     </div>
 
     <div id="store-screen" class="screen">
         <nav><div onclick="App.show('home-screen')">← BACK</div></nav>
-        <div class="grid" id="store-grid"></div>
+        <div class="grid" id="catalog-grid"></div>
     </div>
 
     <div id="game-ui">
-        <div id="chat-window" class="ui-el"></div>
-        <input type="text" id="chat-input" class="ui-el" placeholder="พิมพ์แชทที่นี่...">
-        
-        <div id="joystick-base" class="ui-el"><div id="joystick-knob"></div></div>
-        <div id="jump-btn" class="ui-el">↑</div>
+        <div id="chat-window" class="hud-el"></div>
+        <input type="text" id="chat-input" class="hud-el" placeholder="Click here to chat...">
 
-        <button class="ui-el" style="position:absolute; top:10px; left:10px; padding:10px; background:rgba(0,0,0,0.5); color:white; border:none;" onclick="App.toggleEsc(true)">MENU</button>
-
-        <div id="friend-list" class="ui-el">
+        <div id="player-list-hud" class="hud-el">
             <b>Players</b>
-            <div id="player-rows"></div>
+            <div id="p-rows-cont"></div>
         </div>
 
-        <div id="esc-menu" class="ui-el">
-            <h2 style="color:white;">Menu</h2>
-            <button class="menu-btn" onclick="App.toggleEsc(false)">Resume</button>
-            <button class="menu-btn" onclick="Game.reset()">Reset Character</button>
-            <button class="menu-btn" style="color:red;" onclick="App.leaveGame()">Leave Game</button>
+        <div id="joystick-base" class="hud-el"><div id="joystick-knob"></div></div>
+        <div id="jump-btn" class="hud-el">↑</div>
+
+        <div id="friend-notif" class="hud-el">
+            <b id="bot-name">AI_Friend</b> wants to be friends!<br><br>
+            <button onclick="App.addFriendUI(true)">Accept</button>
+            <button onclick="App.addFriendUI(false)">Decline</button>
         </div>
     </div>
+
+    <div id="esc-menu">
+        <div class="menu-item" onclick="App.toggleEsc(false)">RESUME</div>
+        <div class="menu-item" onclick="Game.respawn()">RESET CHARACTER</div>
+        <div class="menu-item" style="color:red" onclick="App.leaveGame()">LEAVE GAME</div>
+    </div>
+
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg" id="rbx-logo" style="display:none; filter: invert(1);" onclick="App.toggleEsc(true)">
 
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -132,126 +146,136 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- GLOBAL APP LOGIC ---
-        window.App = {
-            user: { name: "Guest", robux: 0, inventory: [], wearing: { torso: "#0066ff", head: "#ffdbac", hair: null } },
+        // --- APPLICATION LOGIC ---
+        const App = {
+            user: { name: "Guest", robux: 0, inventory: [], wearing: { torso: "#0066ff", head: "#ffdbac" } },
             
             init() {
                 this.load();
-                this.renderGames();
-                this.renderStore();
-                this.checkDaily();
-            },
-            
-            login() {
-                const u = document.getElementById('username-in').value;
-                if(!u) return alert("กรุณาใส่ชื่อผู้ใช้!");
-                this.user.name = u;
-                document.getElementById('user-tag').innerText = u;
-                this.save();
-                this.show('home-screen');
+                this.setupCatalog();
+                this.setupGames();
+                
+                // ล็อกอิน
+                document.getElementById('login-trigger').addEventListener('click', () => {
+                    const name = document.getElementById('user-field').value || "Player" + Math.floor(Math.random()*1000);
+                    this.user.name = name;
+                    document.getElementById('u-display').innerText = name;
+                    this.show('home-screen');
+                    this.save();
+                    this.dailyReward();
+                });
+
+                // ระบบแชท
+                document.getElementById('chat-input').addEventListener('keydown', (e) => {
+                    if(e.key === 'Enter') {
+                        this.sendChat(this.user.name, e.target.value);
+                        e.target.value = "";
+                    }
+                });
             },
 
             show(id) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 if(id !== 'none') document.getElementById(id).classList.add('active');
+                document.getElementById('rbx-logo').style.display = (id === 'none') ? 'block' : 'none';
                 if(id === 'avatar-screen') this.renderInventory();
             },
 
-            save() { localStorage.setItem('rbx_classic_data', JSON.stringify(this.user)); },
+            save() { localStorage.setItem('rbx_v2_data', JSON.stringify(this.user)); },
             load() {
-                const data = localStorage.getItem('rbx_classic_data');
+                const data = localStorage.getItem('rbx_v2_data');
                 if(data) {
                     this.user = JSON.parse(data);
                     document.getElementById('robux-val').innerText = this.user.robux;
-                    document.getElementById('user-tag').innerText = this.user.name;
-                    this.updatePreview();
+                    document.getElementById('u-display').innerText = this.user.name;
+                    this.updateAvatarPreview();
                 }
             },
 
-            checkDaily() {
-                const last = localStorage.getItem('rbx_last_login');
+            dailyReward() {
+                const last = localStorage.getItem('last_rbx_login');
                 const today = new Date().toDateString();
                 if(last !== today) {
-                    this.user.robux += 20;
+                    this.user.robux += 25;
                     this.save();
-                    localStorage.setItem('rbx_last_login', today);
-                    alert("Daily Reward: คุณได้รับ 20 Robux ฟรี!");
+                    localStorage.setItem('last_rbx_login', today);
+                    alert("Daily Bonus! ได้รับ 25 Robux ฟรี");
                     document.getElementById('robux-val').innerText = this.user.robux;
                 }
             },
 
-            renderGames() {
+            setupGames() {
                 const maps = [
-                    { name: "Classic Crossroads", color: "#44aa44", type: "Classic" },
-                    { name: "Sword Fight Heights", color: "#888", type: "Combat" },
-                    { name: "Glass Bridge Obby", color: "#88ccff", type: "Obby" },
-                    { name: "Happy Home", color: "#ffaa00", type: "Social" }
+                    { name: "Crossroads", color: "#4d9e4d", desc: "Classic Combat" },
+                    { name: "Sword Heights", color: "#777", desc: "Old School" },
+                    { name: "Chaos Canyon", color: "#aa8844", desc: "Adventure" },
+                    { name: "Glass Bridge", color: "#88ccff", desc: "Obby" },
+                    { name: "Baseplate", color: "#999", desc: "Sandbox" }
                 ];
-                const list = document.getElementById('game-list');
-                list.innerHTML = "";
+                const cont = document.getElementById('game-list');
                 maps.forEach(m => {
                     const el = document.createElement('div');
-                    el.className = "card";
-                    el.innerHTML = `<div class="thumb" style="background:${m.color}">🏰</div><b>${m.name}</b><br><small>${m.type}</small>`;
+                    el.className = 'card';
+                    el.innerHTML = `<div class="thumb" style="background:${m.color}">🏰</div><b>${m.name}</b><br><small>${m.desc}</small>`;
                     el.onclick = () => this.enterGame(m);
-                    list.appendChild(el);
+                    cont.appendChild(el);
                 });
             },
 
-            renderStore() {
+            setupCatalog() {
                 const items = [
-                    { name: "Red Torso", price: 0, color: "#ff0000", type: "torso" },
-                    { name: "Black Torso", price: 0, color: "#222", type: "torso" },
-                    { name: "Green Hair", price: 10, color: "#00ff00", type: "hair" },
-                    { name: "Golden Crown", price: 50, color: "#ffd700", type: "hair" },
-                    { name: "Admin Cape", price: 100, color: "#000", type: "hair" }
+                    { name: "Red Torso", p: 0, c: "#ff4444", t: "torso" },
+                    { name: "Green Torso", p: 0, c: "#44ff44", t: "torso" },
+                    { name: "Classic Hair", p: 10, c: "#333", t: "hair" },
+                    { name: "Gold Hat", p: 50, c: "#ffd700", t: "hat" },
+                    { name: "Admin Suit", p: 100, c: "#222", t: "torso" }
                 ];
-                const grid = document.getElementById('store-grid');
+                const cont = document.getElementById('catalog-grid');
                 items.forEach(i => {
                     const el = document.createElement('div');
-                    el.className = "card";
-                    el.innerHTML = `<div class="thumb" style="background:${i.color}">👒</div><b>${i.name}</b><br><span class="price">R$ ${i.price}</span>`;
+                    el.className = 'card';
+                    el.innerHTML = `<div class="thumb" style="background:${i.c}">👒</div><b>${i.name}</b><span class="price">R$ ${i.p}</span>`;
                     el.onclick = () => {
-                        if(this.user.robux >= i.price) {
-                            this.user.robux -= i.price;
+                        if(this.user.robux >= i.p) {
+                            this.user.robux -= i.p;
                             this.user.inventory.push(i);
                             this.save();
-                            alert("ซื้อสำเร็จ!");
                             document.getElementById('robux-val').innerText = this.user.robux;
+                            alert("ซื้อสำเร็จ!");
                         } else { alert("Robux ไม่พอ!"); }
                     };
-                    grid.appendChild(el);
+                    cont.appendChild(el);
                 });
             },
 
             renderInventory() {
-                const inv = document.getElementById('inv-grid');
-                inv.innerHTML = "<h3>Inventory</h3>";
+                const cont = document.getElementById('inventory-grid');
+                cont.innerHTML = "";
                 this.user.inventory.forEach(i => {
                     const el = document.createElement('div');
-                    el.className = "card";
-                    el.innerHTML = `<div class="thumb" style="background:${i.color}"></div>${i.name}`;
+                    el.className = 'card';
+                    el.innerHTML = `<div class="thumb" style="background:${i.c}"></div>${i.name}`;
                     el.onclick = () => {
-                        this.user.wearing[i.type] = i.color;
-                        this.updatePreview();
+                        if(i.t === 'torso') this.user.wearing.torso = i.c;
+                        this.updateAvatarPreview();
                         this.save();
                     };
-                    inv.appendChild(el);
+                    cont.appendChild(el);
                 });
             },
 
-            updatePreview() {
-                document.getElementById('head-color').style.background = this.user.wearing.head;
-                document.getElementById('torso-color').style.background = this.user.wearing.torso;
+            updateAvatarPreview() {
+                document.getElementById('p-head').style.background = this.user.wearing.head;
+                document.getElementById('p-torso').style.background = this.user.wearing.torso;
             },
 
             enterGame(map) {
                 this.show('none');
                 document.getElementById('game-ui').style.display = 'block';
-                Game.start(map);
-                this.addChat("System", "Welcome to " + map.name);
-                this.spawnBots();
+                Game.init(map);
+                this.updatePlayerList();
+                this.sendChat("System", "Welcome to " + map.name);
+                setTimeout(() => this.showFriendRequest(), 5000);
             },
 
             leaveGame() {
@@ -261,33 +285,48 @@
                 Game.stop();
             },
 
-            addChat(user, msg) {
-                const win = document.getElementById('chat-window');
-                win.innerHTML += `<div><b>${user}:</b> ${msg}</div>`;
-                win.scrollTop = win.scrollHeight;
-            },
-
             toggleEsc(on) { document.getElementById('esc-menu').style.display = on ? 'flex' : 'none'; },
 
-            spawnBots() {
-                const rows = document.getElementById('player-rows');
-                rows.innerHTML = `<div>• ${this.user.name} (You)</div>`;
-                ["Builderman", "Telamon", "AI_Friend_01", "Guest_666"].forEach(b => {
-                    rows.innerHTML += `<div>• ${b} <button onclick="alert('Sent Friend Request!')">+</button></div>`;
+            sendChat(u, m) {
+                const win = document.getElementById('chat-window');
+                win.innerHTML += `<div><b>${u}:</b> ${m}</div>`;
+                win.scrollTop = win.scrollHeight;
+                if(u !== "System") {
+                    setTimeout(() => {
+                        const replies = ["Nice!", "LOL", "Add me", "Old roblox is the best", "I am AI Bot"];
+                        this.sendChat("Bot_AI", replies[Math.floor(Math.random()*replies.length)]);
+                    }, 2000);
+                }
+            },
+
+            updatePlayerList() {
+                const cont = document.getElementById('p-rows-cont');
+                cont.innerHTML = `<div class="p-row"><div class="p-img" style="background:${this.user.wearing.torso}"></div> ${this.user.name} (You)</div>`;
+                ["Builderman", "Telamon", "AI_Friend"].forEach(n => {
+                    cont.innerHTML += `<div class="p-row"><div class="p-img"></div> ${n} <button style="font-size:8px; margin-left:auto">+</button></div>`;
                 });
+            },
+
+            showFriendRequest() {
+                document.getElementById('friend-notif').style.display = 'block';
+            },
+
+            addFriendUI(accept) {
+                document.getElementById('friend-notif').style.display = 'none';
+                if(accept) this.sendChat("System", "You are now friends with AI_Friend!");
             }
         };
 
-        // --- 3D GAME ENGINE (THREE.JS) ---
-        window.Game = {
+        // --- 3D ENGINE ---
+        const Game = {
             scene: null, cam: null, renderer: null, player: null,
-            vel: new THREE.Vector3(), isGrounded: false,
-            move: { f: 0, r: 0 }, running: false,
+            move: { f: 0, r: 0 }, vel: new THREE.Vector3(),
+            isGrounded: false, running: false,
 
-            start(mapData) {
+            init(map) {
                 this.scene = new THREE.Scene();
-                this.scene.background = new THREE.Color(mapData.color);
-                this.scene.fog = new THREE.Fog(mapData.color, 10, 50);
+                this.scene.background = new THREE.Color(map.color);
+                this.scene.fog = new THREE.Fog(map.color, 15, 60);
 
                 this.cam = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
                 this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -295,17 +334,14 @@
                 this.renderer.shadowMap.enabled = true;
                 document.body.appendChild(this.renderer.domElement);
 
-                // Lighting
-                const sun = new THREE.DirectionalLight(0xffffff, 1);
+                this.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                const sun = new THREE.DirectionalLight(0xffffff, 0.8);
                 sun.position.set(10, 20, 10);
                 sun.castShadow = true;
                 this.scene.add(sun);
-                this.scene.add(new THREE.AmbientLight(0x777777));
 
-                // Classic Baseplate
-                const plateGeo = new THREE.PlaneGeometry(100, 100);
-                const plateMat = new THREE.MeshStandardMaterial({ color: 0x666666 });
-                const plate = new THREE.Mesh(plateGeo, plateMat);
+                // Baseplate
+                const plate = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshStandardMaterial({ color: 0x666666 }));
                 plate.rotation.x = -Math.PI/2;
                 plate.receiveShadow = true;
                 this.scene.add(plate);
@@ -321,84 +357,17 @@
                 head.castShadow = true;
                 this.player.add(head);
 
-                // หน้า (Face) - ดวงตา 2 ข้าง
-                const eyeGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+                // สร้างหน้า (Face)
+                const eyeGeo = new THREE.BoxGeometry(0.1, 0.1, 0.05);
                 const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-                const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.15, 0.95, 0.31);
-                const eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.15, 0.95, 0.31);
-                this.player.add(eyeL, eyeR);
+                const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.15, 0.95, 0.3);
+                const eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.15, 0.95, 0.3);
+                const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.05), eyeMat); mouth.position.set(0, 0.8, 0.3);
+                this.player.add(eyeL, eyeR, mouth);
 
                 this.player.position.y = 5;
                 this.scene.add(this.player);
 
                 this.setupControls();
                 this.running = true;
-                this.animate();
-            },
-
-            setupControls() {
-                // คีย์บอร์ด
-                window.onkeydown = (e) => {
-                    if(e.code === 'KeyW') this.move.f = 1;
-                    if(e.code === 'KeyS') this.move.f = -1;
-                    if(e.code === 'KeyA') this.move.r = -1;
-                    if(e.code === 'KeyD') this.move.r = 1;
-                    if(e.code === 'Space' && this.isGrounded) this.vel.y = 0.2;
-                };
-                window.onkeyup = (e) => {
-                    if(['KeyW', 'KeyS'].includes(e.code)) this.move.f = 0;
-                    if(['KeyA', 'KeyD'].includes(e.code)) this.move.r = 0;
-                };
-
-                // มือถือ - Joystick
-                const knob = document.getElementById('joystick-knob');
-                const base = document.getElementById('joystick-base');
-                base.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    const t = e.touches[0];
-                    const r = base.getBoundingClientRect();
-                    const x = t.clientX - r.left - 60;
-                    const y = t.clientY - r.top - 60;
-                    const d = Math.min(Math.sqrt(x*x + y*y), 40);
-                    const ang = Math.atan2(y, x);
-                    knob.style.transform = `translate(${Math.cos(ang)*d}px, ${Math.sin(ang)*d}px)`;
-                    this.move.r = Math.cos(ang) * (d/40);
-                    this.move.f = -Math.sin(ang) * (d/40);
-                });
-                base.addEventListener('touchend', () => {
-                    knob.style.transform = `translate(0,0)`;
-                    this.move = { f: 0, r: 0 };
-                });
-                document.getElementById('jump-btn').addEventListener('touchstart', () => { if(this.isGrounded) this.vel.y = 0.2; });
-            },
-
-            animate() {
-                if(!this.running) return;
-                requestAnimationFrame(() => this.animate());
-
-                // ฟิสิกส์การเดิน
-                const s = 0.15;
-                if(this.move.f !== 0 || this.move.r !== 0) {
-                    this.player.translateZ(-this.move.f * s);
-                    this.player.translateX(this.move.r * s);
-                }
-
-                // แรงโน้มถ่วง
-                this.vel.y -= 0.01;
-                this.player.position.y += this.vel.y;
-                if(this.player.position.y <= 0.6) {
-                    this.player.position.y = 0.6;
-                    this.vel.y = 0;
-                    this.isGrounded = true;
-                } else { this.isGrounded = false; }
-
-                // กล้อง TPS
-                const camPos = new THREE.Vector3(0, 8, 12);
-                camPos.applyQuaternion(this.player.quaternion);
-                this.cam.position.copy(this.player.position).add(camPos);
-                this.cam.lookAt(this.player.position);
-
-                this.renderer.render(this.scene, this.cam);
-            },
-
-            reset() { this.player.position.set(0, 10, 0); App.toggl
+          
