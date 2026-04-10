@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Web Roblox Experience</title>
+    <style>
+        /* CSS: จัดการหน้าจอและ UI เหมือนในเกม */
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { display: block; }
+        
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .label { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 5px; margin-bottom: 5px; }
+        
+        #mobile-controls {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: none; /* จะเปิดทำงานถ้าตรวจเจอว่าใช้มือถือ */
+        }
+        
+        .jump-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.3);
+            border: 2px solid white;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hud">
+        <div class="label"><b>Experience:</b> Sprout World (Beta)</div>
+        <div class="label"><b>Controls:</b> WASD to Move | Space to Jump</div>
+    </div>
+
+    <div id="mobile-controls">
+        <button class="jump-btn" id="btn-jump">JUMP</button>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- 1. SETUP ENGINE ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // Sky Blue
+        scene.fog = new THREE.Fog(0x87CEEB, 10, 50);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // --- 2. LIGHTING (เหมือนระบบ Lighting ใน Studio) ---
+        const sun = new THREE.DirectionalLight(0xffffff, 1);
+        sun.position.set(10, 20, 10);
+        sun.castShadow = true;
+        scene.add(sun);
+        scene.add(new THREE.AmbientLight(0x404040, 1.5));
+
+        // --- 3. BASEPLATE & OBBY PARTS ---
+        // พื้นสีเทาคลาสสิก
+        const baseplateGeo = new THREE.BoxGeometry(100, 1, 100);
+        const baseplateMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
+        const baseplate = new THREE.Mesh(baseplateGeo, baseplateMat);
+        baseplate.position.y = -0.5;
+        baseplate.receiveShadow = true;
+        scene.add(baseplate);
+
+        // สร้าง Kill Part (สีแดง Neon)
+        const killPartGeo = new THREE.BoxGeometry(5, 0.5, 5);
+        const killPartMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.5 });
+        const killPart = new THREE.Mesh(killPartGeo, killPartMat);
+        killPart.position.set(0, 0.1, -10);
+        killPart.castShadow = true;
+        scene.add(killPart);
+
+        // --- 4. AVATAR (R6 Style) ---
+        const player = new THREE.Group();
+        
+        // ตัว (Torso)
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: 0x3d4fe0 }));
+        body.castShadow = true;
+        player.add(body);
+
+        // หัว (Head)
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE.MeshStandardMaterial({ color: 0xffdbac }));
+        head.position.y = 0.9;
+        head.castShadow = true;
+        player.add(head);
+
+        player.position.y = 0.6;
+        scene.add(player);
+
+        // --- 5. PHYSICS & MOVEMENT ---
+        let velocity = new THREE.Vector3();
+        let isGrounded = true;
+        const speed = 0.12;
+        const jumpForce = 0.2;
+        const gravity = 0.008;
+
+        const keys = {};
+        window.addEventListener('keydown', (e) => keys[e.code] = true);
+        window.addEventListener('keyup', (e) => keys[e.code] = false);
+
+        // ฟังก์ชัน Reset ตัวละคร (เหมือนตอนตายใน Roblox)
+        function respawn() {
+            player.position.set(0, 0.6, 0);
+            velocity.set(0,0,0);
+        }
+
+        // --- 6. GAME LOOP ---
+        function update() {
+            requestAnimationFrame(update);
+
+            // การเดิน (WASD)
+            if (keys['KeyW']) player.translateZ(-speed);
+            if (keys['KeyS']) player.translateZ(speed);
+            if (keys['KeyA']) player.rotation.y += 0.05;
+            if (keys['KeyD']) player.rotation.y -= 0.05;
+
+            // ระบบกระโดดและฟิสิกส์ (Simple Luau Logic)
+            if (keys['Space'] && isGrounded) {
+                velocity.y = jumpForce;
+                isGrounded = false;
+            }
+
+            if (!isGrounded) {
+                velocity.y -= gravity;
+                player.position.y += velocity.y;
+            }
+
+            // พื้นดินปลอมๆ (Ground Collision)
+            if (player.position.y <= 0.6) {
+                player.position.y = 0.6;
+                isGrounded = true;
+                velocity.y = 0;
+            }
+
+            // ตรวจสอบการชนกับ Kill Part (Touch Event)
+            const distance = player.position.distanceTo(killPart.position);
+            if (distance < 2.5) {
+                respawn();
+            }
+
+            // ตกแมพ (Void)
+            if (player.position.y < -10) respawn();
+
+            // กล้องตามตัวละคร (Third Person)
+            const relativeCameraOffset = new THREE.Vector3(0, 5, 10);
+            const cameraOffset = relativeCameraOffset.applyMatrix4(player.matrixWorld);
+            camera.position.x = cameraOffset.x;
+            camera.position.y = cameraOffset.y;
+            camera.position.z = cameraOffset.z;
+            camera.lookAt(player.position);
+
+            renderer.render(scene, camera);
+        }
+
+        // จัดการหน้าจอเวลาเปลี่ยนขนาด (Resize)
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ตรวจสอบว่าเป็นมือถือหรือไม่ (เพื่อเปิดปุ่มกระโดด)
+        if ('ontouchstart' in window) {
+            document.getElementById('mobile-controls').style.display = 'block';
+            document.getElementById('btn-jump').addEventListener('touchstart', () => {
+                if(isGrounded) { velocity.y = jumpForce; isGrounded = false; }
+            });
+        }
+
+        update();
+    </script>
+</body>
+</html>
